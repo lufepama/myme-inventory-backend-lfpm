@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Warehouse
 
 
-class WarehouseSerializer(serializers.ModelSerializer):
+class WarehouseSerializer(serializers.Serializer):
     class Meta:
         model = Warehouse
         fields = '__all__'
