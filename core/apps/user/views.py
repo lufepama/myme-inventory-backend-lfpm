@@ -79,7 +79,7 @@ def logout(request):
         user = request.user
         token_user = Token.objects.get(user=user)
         token_user.delete()
-        return Response({'success': True, 'msg': 'Logout successfully'}, status=status.HTTP_200_OK)
+        return Response({'success': True, 'message': 'Logout successfully'}, status=status.HTTP_200_OK)
 
     except:
         return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)

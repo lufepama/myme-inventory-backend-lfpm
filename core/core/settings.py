@@ -21,11 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#Saved into .env file
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','')
+# Saved into .env file
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#Saved into .env file
+# Saved into .env file
 DEBUG = os.environ.get('DEBUG', True)
 
 ALLOWED_HOSTS = []
@@ -137,25 +137,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
-
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Cors configuration
+# Cors configuration
 CORS_ALLOW_ALL_ORIGINS = True
 
-#Abstract user conf
+# Abstract user conf
 AUTH_USER_MODEL = "user.User"
 
 
-#DRF configuration
+# DRF configuration
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
