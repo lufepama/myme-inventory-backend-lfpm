@@ -32,13 +32,13 @@ def create_warehouse_product(request, *args, **kwargs):
             data=ser_data, context=ser_data)
         if (wareproduct_serializer.is_valid()):
             wareproduct_serializer.save()
-            return Response({'success': True, 'message': 'Wareproduct created'}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Wareproduct created'}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'success': False, 'message': wareproduct_serializer.errors}, status=status.HTTP_200_OK)
+            return Response({'success': False, 'message': wareproduct_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
         print({e})
-        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_502_BAD_GATEWAY)
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
@@ -73,13 +73,13 @@ def create_multiple_warehouse_product(request, *args, **kwargs):
                         )
                         new_wareproduct.save()
 
-            return Response({'success': True, 'message': 'Product added to warehouses successfully'}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Product added to warehouses successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response({'success': False, 'message': 'Product not found'}, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
         print(e)
-        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_502_BAD_GATEWAY)
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -102,7 +102,7 @@ def get_warehouse_products(request, *args, **kwargs):
                 wrproduct_query, many=True)
             return Response({'success': True, 'message': 'Warehouse products fetched', 'data': wareproduct_serializer.data}, status=status.HTTP_200_OK)
 
-        return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
         print(e)
@@ -123,7 +123,7 @@ def delete_warehouse_product(request, *args, **kwargs):
         wr_quer = WareProducts.objects.filter(pk=wrproduct_id)
         if (len(wr_quer) > 0):
             wr_quer.first().delete()
-            return Response({'success': True, 'message': 'Product deleted from warehouse successfully'}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Product deleted from warehouse successfully'}, status=status.HTTP_204_NO_CONTENT)
         else:
             return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_400_BAD_REQUEST)
     except:
@@ -152,13 +152,13 @@ def delete_multiple_warehouse_product(request, *args, **kwargs):
                     if (len(wrproduct_query) > 0):
                         wrproduct_query.first().delete()
 
-            return Response({'success': True, 'message': 'Product deleted from warehouses successfully'}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Product deleted from warehouses successfully'}, status=status.HTTP_205_RESET_CONTENT)
         else:
             return Response({'success': False, 'message': 'Product not found'}, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
         print(e)
-        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_502_BAD_GATEWAY)
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['PUT'])

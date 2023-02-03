@@ -22,11 +22,11 @@ def create_product(request, *args, **kwargs):
         product_serializer = ProductSerializer(data=data)
         if (product_serializer.is_valid()):
             product_serializer.save()
-            return Response({'success': True, 'message': 'Product created', 'data': product_serializer.data}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Product created', 'data': product_serializer.data}, status=status.HTTP_201_CREATED)
 
-        return Response({'success': False, 'message': product_serializer.error_messages}, status=status.HTTP_200_OK)
+        return Response({'success': False, 'message': product_serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -42,7 +42,7 @@ def get_products(request, *args, **kwargs):
         return Response({'success': True, 'message': 'Products fetched successfully', 'data': products_serializer.data}, status=status.HTTP_200_OK)
 
     except:
-        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])

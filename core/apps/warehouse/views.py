@@ -21,12 +21,12 @@ def create_warehouse(request, *args, **kwargs):
         warehouse_serializer = WarehouseSerializer(data=data)
         if (warehouse_serializer.is_valid()):
             warehouse_serializer.save()
-            return Response({'success': True, 'message': 'Warehouse created', 'data': warehouse_serializer.data}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Warehouse created', 'data': warehouse_serializer.data}, status=status.HTTP_201_CREATED)
 
-        return Response({'success': False, 'message': warehouse_serializer.error_messages}, status=status.HTTP_200_OK)
+        return Response({'success': False, 'message': warehouse_serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print(e)
-        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -42,7 +42,7 @@ def get_warehouses(request, *args, **kwargs):
         return Response({'success': True, 'data': warehousees_serializer.data}, status=status.HTTP_200_OK)
 
     except:
-        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])
@@ -57,8 +57,8 @@ def delete_warehouse(request, warehouseId, *args, **kwargs):
         # If Warehouse exists, lets delete it
         if (len(warehouse_query) > 0):
             warehouse_query.first().delete()
-            return Response({'success': True, 'message': 'Warehouse deleted successfully'}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Warehouse deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
         else:
             return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

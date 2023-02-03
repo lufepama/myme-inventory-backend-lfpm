@@ -29,7 +29,7 @@ def create_user(request, *args, **kwargs):
             new_user_serializer.save()
             return Response({'success': True, 'message': 'Account created successfully'}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'success': False, 'message': new_user_serializer.errors}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'success': False, 'message': new_user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print(e)
         return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -59,7 +59,7 @@ class Login(ObtainAuthToken):
                         'lastName': user.last_name,
                         'email': user.email,
                         'msg': 'Loggin successfully'
-                    }, status=status.HTTP_201_CREATED)
+                    }, status=status.HTTP_200_OK)
                 else:
                     token.delete()
                     new_token = Token.objects.create(user=user)
@@ -72,11 +72,11 @@ class Login(ObtainAuthToken):
                         'email': user.email,
                         'msg': 'Loggin successfully'
 
-                    }, status=status.HTTP_201_CREATED)
+                    }, status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'El usuario no puede inciar sesion'}, status=status.HTTP_303_SEE_OTHER)
+                return Response({'error': 'The user cannot login'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(login_serializer.errors, status=status.HTTP_303_SEE_OTHER)
+            return Response(login_serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
@@ -89,7 +89,7 @@ def logout(request):
         user = request.user
         token_user = Token.objects.get(user=user)
         token_user.delete()
-        return Response({'success': True, 'message': 'Logout successfully'}, status=status.HTTP_200_OK)
+        return Response({'success': True, 'message': 'Logout successfully'}, status=status.HTTP_205_RESET_CONTENT)
 
     except:
-        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
