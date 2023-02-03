@@ -17,8 +17,11 @@ from .models import User
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_user(request, *args, **kwargs):
-
+    '''
+        Manages the creation of a user. It makes use of serializer in which a custom validation is run
+    '''
     try:
+        # Get data from body
         user_data = request.data
         new_user_serializer = UserSerializer(data=user_data, context=user_data)
 
@@ -33,6 +36,10 @@ def create_user(request, *args, **kwargs):
 
 
 class Login(ObtainAuthToken):
+
+    '''
+        Manages the user login.
+    '''
 
     def post(self, request, *args, **kwargs):
 
@@ -75,6 +82,9 @@ class Login(ObtainAuthToken):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout(request):
+    '''
+        Manages the user logout.
+    '''
     try:
         user = request.user
         token_user = Token.objects.get(user=user)

@@ -12,15 +12,20 @@ from .models import Warehouse
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_warehouse(request, *args, **kwargs):
+    '''
+        Manages the creation of a new warehouse
+    '''
     try:
+        # Get data from body
         data = request.data
         warehouse_serializer = WarehouseSerializer(data=data)
         if (warehouse_serializer.is_valid()):
             warehouse_serializer.save()
-            return Response({'success': True, 'message': 'Warehouse created'}, status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': 'Warehouse created', 'data': warehouse_serializer.data}, status=status.HTTP_200_OK)
 
         return Response({'success': False, 'message': warehouse_serializer.error_messages}, status=status.HTTP_200_OK)
-    except:
+    except Exception as e:
+        print(e)
         return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_403_FORBIDDEN)
 
 
@@ -28,6 +33,9 @@ def create_warehouse(request, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_warehouses(request, *args, **kwargs):
+    '''
+        Manages the return of the list of warehouses saved in ddbb
+    '''
     try:
         warehouses = Warehouse.objects.all()
         warehousees_serializer = WarehouseListSerializer(warehouses, many=True)
@@ -41,6 +49,9 @@ def get_warehouses(request, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_warehouse(request, warehouseId, *args, **kwargs):
+    '''
+        Manages the removal of a single warehouse attending to its warehouseId
+    '''
     try:
         warehouse_query = Warehouse.objects.filter(id=warehouseId)
         # If Warehouse exists, lets delete it

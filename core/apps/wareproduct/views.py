@@ -14,7 +14,12 @@ from apps.warehouse.models import Warehouse
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_warehouse_product(request, *args, **kwargs):
+    '''
+        Manages the creation of a single warehouse-product assigning an certain amount of product.
+        It makes use of serializer to create the resource where some custom validations are run
+    '''
     try:
+        # Get data from body
         data = request.data
         # Convert data from camelcase to snakecase (python friendly notation)
         ser_data = {
@@ -40,6 +45,10 @@ def create_warehouse_product(request, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_multiple_warehouse_product(request, *args, **kwargs):
+    '''
+        Manages the creation or update of warehouse-product, attending to a given product amount 
+        If resource already exists, it will add the amount to the previous one
+    '''
     try:
         data = request.data
         product_id = data['productId']
@@ -77,8 +86,12 @@ def create_multiple_warehouse_product(request, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_warehouse_products(request, *args, **kwargs):
-
+    ''''
+        Returns all products placed in a given warehouse. A serializer is used to return the data in 
+        personalized format
+    '''
     try:
+        # Get data from body
         data = request.data
         warehouse_id = data['warehouseId']
         wr_query = Warehouse.objects.filter(pk=warehouse_id)
@@ -100,7 +113,11 @@ def get_warehouse_products(request, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_warehouse_product(request, *args, **kwargs):
+    '''
+        Manages the removal of a warehouse
+    '''
     try:
+        # Get data from body
         wrproduct_id = request.data['wrProductId']
 
         wr_quer = WareProducts.objects.filter(pk=wrproduct_id)
@@ -117,7 +134,11 @@ def delete_warehouse_product(request, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_multiple_warehouse_product(request, *args, **kwargs):
+    '''
+        Manages the removal warehouse products
+    '''
     try:
+        # Get data from body
         data = request.data
         product_id = data['productId']
         warehouse_id_list = data['warehouseIdList']
@@ -144,7 +165,11 @@ def delete_multiple_warehouse_product(request, *args, **kwargs):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_amount_warehouse_product(request, *args, **kwargs):
+    '''
+        Updates the amount prop of product in a warehouse
+    '''
     try:
+        # Get data from body
         data = request.data
         wrproduct_id = data['wrProductId']
         amount = data['amount']

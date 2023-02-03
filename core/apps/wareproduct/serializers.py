@@ -10,7 +10,8 @@ class WareProductListSerializer(serializers.BaseSerializer):
         return {
             'id': instance.pk,
             'product': instance.get_product_data,
-            'warehouseId': instance.warehouse.pk
+            'warehouseId': instance.warehouse.pk,
+            'isAvailable': instance.is_available
         }
 
 
