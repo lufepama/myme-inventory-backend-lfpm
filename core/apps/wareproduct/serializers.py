@@ -67,26 +67,26 @@ class WareProductSerializer(serializers.Serializer):
                 'Something went wrong with amount'
             )
 
-    def validate(self, value):
-        product = Product.objects.get(pk=self.context['product_id'])
-        warehouse = Warehouse.objects.get(pk=self.context['warehouse_id'])
-        wrprod_query = WareProducts.objects.filter(
-            product=product, warehouse=warehouse)
-        if (len(wrprod_query) > 0):
-            raise serializers.ValidationError(
-                'A product is already in the warehouse. Modify its amount')
-        return value
-
     def create(self, validated_data):
+        '''
+            Create resource or increment amount prop in case it exists
+        '''
         warehouse = Warehouse.objects.get(pk=validated_data['warehouse_id'])
         product = Product.objects.get(pk=validated_data['product_id'])
         amount = validated_data['amount']
 
-        new_wareproduct = WareProducts(
-            warehouse=warehouse,
-            product=product,
-            amount=amount
-        )
-
-        new_wareproduct.save()
-        return new_wareproduct
+        wrprod_query = WareProducts.objects.filter(
+            product=product, warehouse=warehouse)
+        if (len(wrprod_query) > 0):
+            wrprod = wrprod_query.first()
+            wrprod.amount += int(self.context['amount'])
+            wrprod.save()
+            return wrprod
+        else:
+            new_wareproduct = WareProducts(
+                warehouse=warehouse,
+                product=product,
+                amount=amount
+            )
+            new_wareproduct.save()
+            return new_wareproduct

@@ -36,6 +36,43 @@ def create_warehouse_product(request, *args, **kwargs):
         return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_502_BAD_GATEWAY)
 
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def create_multiple_warehouse_product(request, *args, **kwargs):
+    try:
+        data = request.data
+        product_id = data['productId']
+        product_amount = data['amount']
+        warehouse_id_list = data['warehouseIdList']
+        product_query = Product.objects.filter(pk=product_id)
+        if (len(product_query) > 0):
+            for id in warehouse_id_list:
+                warehouse_query = Warehouse.objects.filter(pk=id)
+                if (len(warehouse_query) > 0):
+                    wrproduct_query = WareProducts.objects.filter(
+                        warehouse=warehouse_query.first()).filter(product=product_query.first())
+                    if (len(wrproduct_query) > 0):
+                        wrproduct = wrproduct_query.first()
+                        wrproduct.amount += product_amount
+                        wrproduct.save()
+                    else:
+                        new_wareproduct = WareProducts(
+                            warehouse=warehouse_query.first(),
+                            product=product_query.first(),
+                            amount=product_amount
+                        )
+                        new_wareproduct.save()
+
+            return Response({'success': True, 'message': 'Product added to warehouses successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'success': False, 'message': 'Product not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        print(e)
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_502_BAD_GATEWAY)
+
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -56,11 +93,68 @@ def get_warehouse_products(request, *args, **kwargs):
 
     except Exception as e:
         print(e)
-        return Response({'success': True, 'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_warehouse_product(request, *args, **kwargs):
-    pass
+    try:
+        wrproduct_id = request.data['wrProductId']
+
+        wr_quer = WareProducts.objects.filter(pk=wrproduct_id)
+        if (len(wr_quer) > 0):
+            wr_quer.first().delete()
+            return Response({'success': True, 'message': 'Product deleted from warehouse successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_multiple_warehouse_product(request, *args, **kwargs):
+    try:
+        data = request.data
+        product_id = data['productId']
+        warehouse_id_list = data['warehouseIdList']
+        product_query = Product.objects.filter(pk=product_id)
+        if (len(product_query) > 0):
+            for id in warehouse_id_list:
+                warehouse_query = Warehouse.objects.filter(pk=id)
+                if (len(warehouse_query) > 0):
+                    wrproduct_query = WareProducts.objects.filter(
+                        warehouse=warehouse_query.first()).filter(product=product_query.first())
+                    if (len(wrproduct_query) > 0):
+                        wrproduct_query.first().delete()
+
+            return Response({'success': True, 'message': 'Product deleted from warehouses successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'success': False, 'message': 'Product not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        print(e)
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_502_BAD_GATEWAY)
+
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_amount_warehouse_product(request, *args, **kwargs):
+    try:
+        data = request.data
+        wrproduct_id = data['wrProductId']
+        amount = data['amount']
+        wr_quer = WareProducts.objects.filter(pk=wrproduct_id)
+        if (len(wr_quer) > 0):
+            wrproduct = wr_quer.first()
+            wrproduct.amount = amount
+            wrproduct.save()
+            return Response({'success': True, 'message': 'Warehouse product amount updated successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'success': False, 'message': 'Warehouse product not found'}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({'success': False, 'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
