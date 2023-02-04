@@ -17,5 +17,6 @@ class ProductListSerializer(serializers.BaseSerializer):
         return {
             'id': instance.pk,
             'name': instance.name,
-            'description': instance.description
+            'description': instance.description,
+            'price': instance.price
         }

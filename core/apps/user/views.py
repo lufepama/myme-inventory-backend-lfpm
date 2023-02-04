@@ -89,7 +89,6 @@ def logout(request):
         user = request.user
         token_user = Token.objects.get(user=user)
         token_user.delete()
-        return Response({'success': True, 'message': 'Logout successfully'}, status=status.HTTP_205_RESET_CONTENT)
-
+        return Response({'success': True, 'message': 'Logout successfully'}, status=status.HTTP_200_OK)
     except:
         return Response({'success': False, 'message': 'Something went wrong...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

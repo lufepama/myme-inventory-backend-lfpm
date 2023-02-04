@@ -9,7 +9,6 @@ class UserSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=20)
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
-    email = serializers.EmailField()
 
     def validate_username(self, value):
         '''
