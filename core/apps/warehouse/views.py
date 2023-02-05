@@ -57,7 +57,7 @@ def delete_warehouse(request, warehouseId, *args, **kwargs):
         # If Warehouse exists, lets delete it
         if (len(warehouse_query) > 0):
             warehouse_query.first().delete()
-            return Response({'success': True, 'message': 'Warehouse deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'success': True, 'message': 'Warehouse deleted successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_400_BAD_REQUEST)
     except:

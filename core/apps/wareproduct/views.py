@@ -85,21 +85,20 @@ def create_multiple_warehouse_product(request, *args, **kwargs):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_warehouse_products(request, *args, **kwargs):
+def get_warehouse_products(request, warehouse_id, *args, **kwargs):
     ''''
         Returns all products placed in a given warehouse. A serializer is used to return the data in 
         personalized format
     '''
     try:
-        # Get data from body
-        data = request.data
-        warehouse_id = data['warehouseId']
+
         wr_query = Warehouse.objects.filter(pk=warehouse_id)
         if (len(wr_query)):
             wrproduct_query = WareProducts.objects.filter(
                 warehouse=wr_query.first())
             wareproduct_serializer = WareProductListSerializer(
                 wrproduct_query, many=True)
+
             return Response({'success': True, 'message': 'Warehouse products fetched', 'data': wareproduct_serializer.data}, status=status.HTTP_200_OK)
 
         return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_400_BAD_REQUEST)
