@@ -8,7 +8,7 @@ urlpatterns = [
          name='create-warehouse-product'),
     path('create-multiple-product', views.create_multiple_warehouse_product,
          name='create-warehouse-product'),
-    path('delete-product', views.delete_warehouse_product,
+    path('delete-product/<int:wr_product_id>', views.delete_warehouse_product,
          name='get-warehouse-products'),
     path('delete-multiple-product', views.delete_multiple_warehouse_product,
          name='get-warehouse-products'),

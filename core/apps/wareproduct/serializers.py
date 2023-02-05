@@ -54,18 +54,12 @@ class WareProductSerializer(serializers.Serializer):
             )
 
     def validate_amount(self, value):
-        try:
 
-            if (value > 0):
-                return value
-            else:
-                raise serializers.ValidationError(
-                    'The amount must be positive integer value'
-                )
-
-        except:
+        if (value >= 0):
+            return value
+        else:
             raise serializers.ValidationError(
-                'Something went wrong with amount'
+                'The amount must be positive integer value'
             )
 
     def create(self, validated_data):

@@ -31,8 +31,19 @@ def create_warehouse_product(request, *args, **kwargs):
         wareproduct_serializer = WareProductSerializer(
             data=ser_data, context=ser_data)
         if (wareproduct_serializer.is_valid()):
-            wareproduct_serializer.save()
-            return Response({'success': True, 'message': 'Wareproduct created'}, status=status.HTTP_201_CREATED)
+            res = wareproduct_serializer.save()
+            ret_data = {
+                'id': res.pk,
+                'warehouseId': res.id,
+                'product': {
+                    'id': res.product.pk,
+                    'name': res.product.name,
+                    'description': res.product.description,
+                    'price': res.product.price,
+                    'amount': res.amount
+                }
+            }
+            return Response({'success': True, 'message': 'Wareproduct created', 'data': ret_data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'success': False, 'message': wareproduct_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -53,6 +64,7 @@ def create_multiple_warehouse_product(request, *args, **kwargs):
         data = request.data
         product_id = data['productId']
         product_amount = data['amount']
+        print(product_amount)
         warehouse_id_list = data['warehouseIdList']
         product_query = Product.objects.filter(pk=product_id)
         if (len(product_query) > 0):
@@ -63,7 +75,7 @@ def create_multiple_warehouse_product(request, *args, **kwargs):
                         warehouse=warehouse_query.first()).filter(product=product_query.first())
                     if (len(wrproduct_query) > 0):
                         wrproduct = wrproduct_query.first()
-                        wrproduct.amount += product_amount
+                        wrproduct.amount += int(product_amount)
                         wrproduct.save()
                     else:
                         new_wareproduct = WareProducts(
@@ -111,18 +123,15 @@ def get_warehouse_products(request, warehouse_id, *args, **kwargs):
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def delete_warehouse_product(request, *args, **kwargs):
+def delete_warehouse_product(request, wr_product_id, *args, **kwargs):
     '''
         Manages the removal of a warehouse
     '''
     try:
-        # Get data from body
-        wrproduct_id = request.data['wrProductId']
-
-        wr_quer = WareProducts.objects.filter(pk=wrproduct_id)
+        wr_quer = WareProducts.objects.filter(pk=wr_product_id)
         if (len(wr_quer) > 0):
             wr_quer.first().delete()
-            return Response({'success': True, 'message': 'Product deleted from warehouse successfully'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'success': True, 'message': 'Product deleted from warehouse successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'success': False, 'message': 'Warehouse not found'}, status=status.HTTP_400_BAD_REQUEST)
     except:
@@ -151,7 +160,7 @@ def delete_multiple_warehouse_product(request, *args, **kwargs):
                     if (len(wrproduct_query) > 0):
                         wrproduct_query.first().delete()
 
-            return Response({'success': True, 'message': 'Product deleted from warehouses successfully'}, status=status.HTTP_205_RESET_CONTENT)
+            return Response({'success': True, 'message': 'Product deleted from warehouses successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'success': False, 'message': 'Product not found'}, status=status.HTTP_400_BAD_REQUEST)
 
