@@ -64,7 +64,6 @@ def create_multiple_warehouse_product(request, *args, **kwargs):
         data = request.data
         product_id = data['productId']
         product_amount = data['amount']
-        print(product_amount)
         warehouse_id_list = data['warehouseIdList']
         product_query = Product.objects.filter(pk=product_id)
         if (len(product_query) > 0):

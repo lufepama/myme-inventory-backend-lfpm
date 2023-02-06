@@ -1,7 +1,3 @@
-from django.db.models.query import QuerySet
-from django.http.response import JsonResponse
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
@@ -11,7 +7,6 @@ from rest_framework.serializers import Serializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer
-from .models import User
 
 
 @api_view(['POST'])
@@ -23,6 +18,7 @@ def create_user(request, *args, **kwargs):
     try:
         # Get data from body
         user_data = request.data
+
         new_user_serializer = UserSerializer(data=user_data, context=user_data)
 
         if new_user_serializer.is_valid():
@@ -85,6 +81,7 @@ def logout(request):
     '''
         Manages the user logout.
     '''
+
     try:
         user = request.user
         token_user = Token.objects.get(user=user)
